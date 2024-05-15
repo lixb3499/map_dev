@@ -137,7 +137,7 @@ class Map(Tracker):
             is_track_inside_area = False
 
             for area in self.areas:
-                if area.isenter(track.trace_point_list[-1]):
+                if area.isenter(track.trace_point_list[0]):  # 新添加的轨迹应该计算第一个点的
                     is_track_inside_area = True
                     break
 
@@ -146,6 +146,8 @@ class Map(Tracker):
                 #     self.areas[nearest_area_index].count_car -= 1
                 self.areas[nearest_area_index].count_car -= 1
                 track.parking_id = None
+            elif self.lane.isenter(track.trace_point_list[0]):  # 第一次出现时候在车道里面且判断不是在车位里面出来的则判定为进入车道
+                self.lane.entry_event = True
 
         # 处理消失的轨迹
         for track in removed_tracks:
@@ -165,6 +167,8 @@ class Map(Tracker):
                 if track.confirmflag:
                     self.areas[nearest_area_id].count_car += 1
                     track.parking_id = nearest_area_id
+            elif self.lane.isenter(track.trace_point_list[-1]):  # 消失的时候在车道里面且判断不是在车位里面的则判定为驶出了车道
+                self.lane.entry_event = True
 
     def update_direction(self, track, reference_point=(0, 0)):
         '''
@@ -231,6 +235,16 @@ class Map(Tracker):
         # print("Exit event:", self.lane.exit_event)
         # print("Traffic congestion event:", self.lane.traffic_congestion_event)
         # print("Parking violation event:", self.lane.parking_violation_event)
+
+    def print_event(self):
+        if self.lane.entry_event:
+            print("lane_entry_event")
+        if self.lane.exit_event:
+            print("lane_exit_event")
+        if self.lane.parking_violation_event:
+            print("lane_parking_violation_event")
+        if self.lane.traffic_congestion_event:
+            print("lane_traffic_congestion_event")
 
     def evalue(self, label_path):
         folder_path = 'label_json'
@@ -323,11 +337,14 @@ class Border(object):
         self.thickness = 2
         isintersect = intersect(point, previous_point, self.point[0], self.point[1])
         if self.point[0][0] == self.point[1][0] and point[0] == self.point[0][0]:
-            if point[1] > min(self.point[0][1] , self.point[1][1]) and point[1] < max(self.point[0][1] , self.point[1][1]):
+            if point[1] > min(self.point[0][1], self.point[1][1]) and point[1] < max(self.point[0][1],
+                                                                                     self.point[1][1]):
                 if previous_point[0] != point[0]:
                     isintersect = True
         if self.point[0][0] == self.point[1][0] and previous_point[0] == self.point[0][0]:
-            if previous_point[1] > min(self.point[0][1] , self.point[1][1]) and previous_point[1] < max(self.point[0][1] , self.point[1][1]):
+            if previous_point[1] > min(self.point[0][1], self.point[1][1]) and previous_point[1] < max(self.point[0][1],
+                                                                                                       self.point[1][
+                                                                                                           1]):
                 if previous_point[0] != point[0]:
                     isintersect = True
         if isintersect:
@@ -373,14 +390,16 @@ class Area(object):
         result = is_point_inside_rectangle(self.rectangle_left_top, self.rectangle_right_bottom, point)
         if previous_point is None:
             return result
-        result = result and (not is_point_inside_rectangle(self.rectangle_left_top, self.rectangle_right_bottom, previous_point))
+        result = result and (
+            not is_point_inside_rectangle(self.rectangle_left_top, self.rectangle_right_bottom, previous_point))
         return result
 
     def ifout(self, point, previous_point=None):
         result = not is_point_inside_rectangle(self.rectangle_left_top, self.rectangle_right_bottom, point)
         if previous_point is None:
             return result
-        result = result and (is_point_inside_rectangle(self.rectangle_left_top, self.rectangle_right_bottom, previous_point))
+        result = result and (
+            is_point_inside_rectangle(self.rectangle_left_top, self.rectangle_right_bottom, previous_point))
         return result
 
     def intersect(self, track, point, previous_point):

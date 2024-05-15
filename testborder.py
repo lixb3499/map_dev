@@ -71,7 +71,7 @@ def plot_box_map(ax, box_coords):
 
 
 def main(args):
-    label_path = args.label_path
+    label_path = args.data_file + "/saved_txt"
     file_name = args.file_name
     save_txt = args.save_txt
 
@@ -81,9 +81,8 @@ def main(args):
     if not os.path.exists('video_out'):
         os.mkdir('video_out')
     video_filename = os.path.join('video_out', 'exp' + current_time + '.mp4')
-    # log_file_name = "output.log"
     log_file_name = os.path.join('log', 'exp' + current_time + '.log')
-    # redirect_print_to_log(log_file_name)
+    redirect_print_to_log(log_file_name)
 
     frame_rate = args.frame_rate
     filelist = os.listdir(label_path)
@@ -182,6 +181,7 @@ def main(args):
             content = f.readlines()
             # track.predict()
             tracker.update(content)
+            tracker.print_event()
         tracker.draw_tracks(frame)
         # tracker.evalue(f'evalue/label_json/{frame_counter:04d}.json')
         # print('self.parking_occupancy_accuracy = ', tracker.parking_occupancy_accuracy)
@@ -202,6 +202,7 @@ def main(args):
             cv2.putText(frame, f"count of area_{area.id}:    {area.count_car}", (25, 100 + 25 * area.id),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 255),
                         2)
+        cv2.putText(frame, f"{frame_counter}/{frame_number}", (25, 125 + 25 * len(tracker.areas)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         cv2.imshow('track', frame)
         if SAVE_VIDEO:
@@ -218,10 +219,10 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # 添加参数
-    parser.add_argument('--data_file', type=str, default='point\\204_0')
-    parser.add_argument('--label_path', type=str,
-                        default='point\\204_0\\saved_txt',
-                        help='Path to the label directory')
+    parser.add_argument('--data_file', type=str, default=r'G:\jieshun\project_data\2024_5_13\point(1)\point\155\155_loc03\2024-05-13_11-08-58')
+    # parser.add_argument('--label_path', type=str,
+    #                     default=r'G:\jieshun\project_data\2024_5_13\point(1)\point\155\155_loc03\2024-05-13_11-08-58\saved_points',
+    #                     help='Path to the label directory')
     parser.add_argument('--file_name', type=str, default='', help='Specify a file name')
     parser.add_argument('--save_txt', type=str, default='save_txt', help='Specify the save_txt directory')
     parser.add_argument('--save_video', action='store_true', help='Flag to save video', default=True)
@@ -252,7 +253,7 @@ def parse_args():
     #                              [2.8476686921018706, 17.64568737467815, 8.34766869210187, 8.686314766406971]],
     #                     help='Define areas as left-top and right-bottom coordinates in the format x1 y1 x2 y2, '
     #                          'x1 y1 x2 y2, ...')  # 必须是左上、右下对应的
-    parser.add_argument('--coords', type=str, default="point\\coords.txt", help='车位坐标文件')
+    parser.add_argument('--coords', type=str, default=r"G:\jieshun\project_data\2024_5_13\point(1)\point\155\coords.txt", help='车位坐标文件')
 
     args = parser.parse_args()
     return args
@@ -260,40 +261,7 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    # changelabel(args)
+    changelabel(args)
     main(args)
-    # sys.stdout.log.close()
+    sys.stdout.log.close()
 
-"""
-# 循环绘制图形并保存为视频
-for i in range(318):
-    # 清除之前的绘图
-    ax.clear()
-
-    # 在坐标轴上绘制新的图形（这里用一个简单的例子）
-    x = np.linspace(0, 20 * np.pi, 100)
-    y = np.sin(x + i * 0.1)
-    ax.plot(x, y)
-
-    # 将绘制的内容渲染到画布上
-    canvas.draw()
-
-    # 从画布获取图像并将其转换为OpenCV格式
-    img = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
-    img = img.reshape(canvas.get_width_height()[::-1] + (3,))
-
-    # 将图像写入视频
-    video_writer.write(img)
-
-    cv2.imshow('Matplotlib Video', img)
-
-    # 检查按键 'q' 是否被按下，如果是则退出循环
-    if cv2.waitKey(1000 // frame_rate) & 0xFF == ord('q'):
-        break
-
-# 释放资源
-video_writer.release()
-
-# 显示Matplotlib图形（可选）
-plt.show()
-"""
