@@ -3,8 +3,8 @@ import cv2
 import numpy as np
 from utils import plot_one_box, cal_iou, xyxy_to_xywh, xywh_to_xyxy, updata_trace_list, draw_trace
 import datetime
-from tracker import Tracks
-from tracker1 import Tracker
+from tracks import Tracks
+from tracker import Tracker
 from kalmanfilter import KalmanFilter
 from scipy.optimize import linear_sum_assignment
 from matplotlib import pyplot as plt

@@ -3,8 +3,8 @@ import cv2
 from utils import plot_one_box, cal_iou, xyxy_to_xywh, xywh_to_xyxy, updata_trace_list, draw_trace, intersect, ccw, \
      Coord_prcssing
 import datetime
-from tracker import Tracks
-from tracker1 import Tracker
+from tracks import Tracks
+from tracker import Tracker
 from kalmanfilter import KalmanFilter
 from matplotlib import patches
 import cv2
@@ -74,6 +74,7 @@ def main(args):
     label_path = args.data_file + "/saved_txt"
     file_name = args.file_name
     save_txt = args.save_txt
+    print(args.data_file)
 
     # 设置视频相关参数
     SAVE_VIDEO = args.save_video
@@ -261,7 +262,7 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    changelabel(args)
+    # changelabel(args)
     main(args)
     sys.stdout.log.close()
 
