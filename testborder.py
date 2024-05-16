@@ -71,8 +71,7 @@ def plot_box_map(ax, box_coords):
 
 
 def main(args):
-    label_path = args.data_file + "/saved_txt"
-    file_name = args.file_name
+    label_path = args.data_file + "/saved_points"
     save_txt = args.save_txt
     print(args.data_file)
 
@@ -129,9 +128,11 @@ def main(args):
         area_pixels.append([(area[i], area[i + 1]) for i in range(0, len(area), 2)])
     lane_pixels = [(lane[i], lane[i + 1]) for i in range(0, len(lane), 2)]
 
-    with open(os.path.join(label_path, file_name + str(0) + ".txt"), 'r', encoding='utf-8') as f:
-        content = f.readlines()
-        tracker = Map(content, area_pixels, lane_pixels, frame_rate)
+    # with open(os.path.join(label_path, file_name + str(0) + ".txt"), 'r', encoding='utf-8') as f:
+    label_file = os.path.join(label_path, 'world_coords' + '_' + str(0).zfill(3) + ".txt")
+    # content = f.readlines()
+    content = changelabel(args, label_file)
+    tracker = Map(content, area_pixels, lane_pixels, frame_rate)
 
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
@@ -174,15 +175,17 @@ def main(args):
         if frame_counter > frame_number:
             break
         # label_file_path = os.path.join(label_path, file_name + "_" + str(frame_counter) + ".txt")
-        label_file_path = os.path.join(label_path, file_name + str(frame_counter) + ".txt")
-        if not os.path.exists(label_file_path):
-            with open(label_file_path, "w") as f:
-                pass
-        with open(label_file_path, "r", encoding='utf-8') as f:
-            content = f.readlines()
-            # track.predict()
-            tracker.update(content)
-            tracker.print_event()
+        # label_file_path = os.path.join(label_path, file_name + str(frame_counter) + ".txt")
+        # if not os.path.exists(label_file_path):
+        #     with open(label_file_path, "w") as f:
+        #         pass
+        # with open(label_file_path, "r", encoding='utf-8') as f:
+        #     content = f.readlines()
+        #     # track.predict()
+        label_file = os.path.join(label_path, 'world_coords' + '_' + str(frame_counter).zfill(3) + ".txt")
+        content = changelabel(args, label_file)
+        tracker.update(content)
+        tracker.print_event()
         tracker.draw_tracks(frame)
         # tracker.evalue(f'evalue/label_json/{frame_counter:04d}.json')
         # print('self.parking_occupancy_accuracy = ', tracker.parking_occupancy_accuracy)
@@ -220,7 +223,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # 添加参数
-    parser.add_argument('--data_file', type=str, default=r'G:\jieshun\project_data\2024_5_13\point(1)\point\155\155_loc03\2024-05-13_11-08-58')
+    parser.add_argument('--data_file', type=str, default=r'G:\jieshun\project_data\2024_5_13\point('
+                                                         r'1)\point\155\155_loc03\2024-05-13_11-08-58')
     # parser.add_argument('--label_path', type=str,
     #                     default=r'G:\jieshun\project_data\2024_5_13\point(1)\point\155\155_loc03\2024-05-13_11-08-58\saved_points',
     #                     help='Path to the label directory')
