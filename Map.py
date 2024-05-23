@@ -76,22 +76,6 @@ class Map(Tracker):
             area.draw(frame)
         self.lane.draw(frame)
 
-    # def nearest_area_distance(self, track):
-    #     """
-    #     计算轨迹中心点距离每个区域的距离并返回最短距离及所属区域的ID
-    #     """
-    #     point = track.trace_point_list[-1]
-    #     min_distance = float('inf')
-    #     min_area_id = -1
-    #
-    #     for i, area in enumerate(self.areas):
-    #         area_center = area.centre
-    #         distance = np.linalg.norm(np.array(area_center) - np.array(point))
-    #         if distance < min_distance:
-    #             min_distance = distance
-    #             min_area_id = area.id
-    #
-    #     return min_area_id, min_distance
     def nearest_area_distance(self, track, flag):
         if flag == 'remove':
             point = track.trace_point_list[-1]
@@ -118,6 +102,10 @@ class Map(Tracker):
         更新Map图中的区域计数信息等
         :return: None
         """
+        if not self.lane:
+            return
+        self.lane.entry_event, self.lane.exit_event = False, False
+        self.lane.parking_violation_event, self.lane.traffic_congestion_event = False, False
         removed_tracks, added_tracks = update_info
         for track in self.tracks:
             if len(track.trace_point_list) < 2:
@@ -193,8 +181,8 @@ class Map(Tracker):
     def update_events(self):
         if not self.lane:
             return
-        self.lane.entry_event, self.lane.exit_event = False, False
-        self.lane.parking_violation_event, self.lane.traffic_congestion_event = False, False
+        # self.lane.entry_event, self.lane.exit_event = False, False
+        # self.lane.parking_violation_event, self.lane.traffic_congestion_event = False, False
 
         # reference_point = np.array([width / 2, height / 2])  # 使用视频中心作为参考点
         for track in self.tracks:
@@ -245,6 +233,12 @@ class Map(Tracker):
             print("lane_parking_violation_event")
         if self.lane.traffic_congestion_event:
             print("lane_traffic_congestion_event")
+        for track in self.tracks:
+            if len(track.trace_v_list) > 1:
+                if track.approaching_event:
+                    print(f"id = {track.track_id}, v = {track.trace_v_list[-1]}, 靠近摄像头")
+                else:
+                    print(f"id = {track.track_id}, v = {track.trace_v_list[-1]}, 远离摄像头")
 
     def evalue(self, label_path):
         folder_path = 'label_json'

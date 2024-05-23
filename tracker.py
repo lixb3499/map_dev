@@ -62,7 +62,7 @@ class Tracker:
         for track in self.tracks:  # 第一次检测到的目标直接设置为确定态
             track.confirmflag = True
         self.next_id = i + 1
-        self.max_lost_number = 10
+        self.max_lost_number = 2
         self.KF = KalmanFilter()
         self.frame_rate = frame_rate
         self.confirm_frame = 3  # 设为确定态所需要连续匹配到的帧数

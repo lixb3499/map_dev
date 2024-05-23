@@ -24,7 +24,7 @@ pip install -r requirements.txt
 
 ### example_7_demo_0105 
 
-我们这个demo的主程序是[testborder.py](testborder.py)，直接点击运行即可。一个参考的输出（[here](video_out/exp2024-01-07_10-26-08.mp4)）。我们的参数可以在下图中的函数中调整，当然你也可以直接命令或者编辑器中更改，其中参数说明如下：
+我们这个demo的主程序是[testborder.py](main.py)，直接点击运行即可。一个参考的输出（[here](video_out/exp2024-01-07_10-26-08.mp4)）。我们的参数可以在下图中的函数中调整，当然你也可以直接命令或者编辑器中更改，其中参数说明如下：
 
 <img src=".\gra\image-20240108235218343.png" alt="image-20240108235218343" style="zoom:80%;" />
 
