@@ -118,7 +118,7 @@ class Tracks:
         else:
             if len(self.trace_v_list) > 0:  # 第一次检测到的时候也是匹配不到的
                 self.X[-2::] = self.trace_v_list[0]
-            self.X, self.P = self.KF.predict(self.X, self.P)
+            # self.X, self.P = self.KF.predict(self.X, self.P)
             # self.X[2: 4] = [120, 120]
 
             self.number_since_match = 0

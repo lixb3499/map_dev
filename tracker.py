@@ -62,7 +62,7 @@ class Tracker:
         for track in self.tracks:  # 第一次检测到的目标直接设置为确定态
             track.confirmflag = True
         self.next_id = i + 1
-        self.max_lost_number = 2
+        self.max_lost_number = 10
         self.KF = KalmanFilter()
         self.frame_rate = frame_rate
         self.confirm_frame = 3  # 设为确定态所需要连续匹配到的帧数
@@ -136,10 +136,12 @@ class Tracker:
                     track.update(detection['coordinate'])
             if track.lost_number > self.max_lost_number:  # 超过一段时间没有匹配上则直接删除
                 removed_track.append(track)
-                self.tracks.remove(track)
+                # self.tracks.remove(track)
             if (not track.confirmflag) and (track.number_since_match > self.confirm_frame):
                 track.confirmflag = True
                 added_track.append(track) # 认为出现新轨迹
+        for track in removed_track:
+            self.tracks.remove(track)
         tracker_id_list = [track.track_id for track in self.tracks]  # 更新
         for detection in detection_list:
             if detection['id'] not in tracker_id_list:

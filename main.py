@@ -223,8 +223,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # 添加参数
-    parser.add_argument('--data_file', type=str, default=r'G:\jieshun\project_data\2024_5_13\point('
-                                                         r'1)\point\155\155_loc03\2024-05-13_11-08-58')
+    parser.add_argument('--data_file', type=str, default=r'G:\jieshun\project_data\2024_6\point\172.16.1.154') # saved_point上一级
     # parser.add_argument('--label_path', type=str,
     #                     default=r'G:\jieshun\project_data\2024_5_13\point(1)\point\155\155_loc03\2024-05-13_11-08-58\saved_points',
     #                     help='Path to the label directory')
@@ -236,7 +235,7 @@ def parse_args():
     parser.add_argument('--x_lim', nargs=2, type=float, default=[-10, 10], help='X-axis limits')
     parser.add_argument('--y_lim', nargs=2, type=float, default=[0, 20], help='Y-axis limits')
     parser.add_argument('--cls_list', type=list, default=['Car', 'Truck'], help='classes that need to be filtered out')
-    parser.add_argument('--lane', nargs='+', type=float, default=[-2.5242669551176207, 18, 2.4406024322486223, 0],
+    parser.add_argument('--lane', nargs='+', type=float, default=[-3.2131085968935326, 18, 3.373629004435308, 0],
                         help='Define lane boundary as '
                              'x_min y_min x_max y_max')
     parser.add_argument('--lane_direction', type=int, choices=[0, 1], default=0,
@@ -258,7 +257,7 @@ def parse_args():
     #                              [2.8476686921018706, 17.64568737467815, 8.34766869210187, 8.686314766406971]],
     #                     help='Define areas as left-top and right-bottom coordinates in the format x1 y1 x2 y2, '
     #                          'x1 y1 x2 y2, ...')  # 必须是左上、右下对应的
-    parser.add_argument('--coords', type=str, default=r"G:\jieshun\project_data\2024_5_13\point(1)\point\155\coords.txt", help='车位坐标文件')
+    parser.add_argument('--coords', type=str, default=r"G:\jieshun\project_data\2024_6\point\172.16.1.154\coords.txt", help='车位坐标文件')
 
     args = parser.parse_args()
     return args

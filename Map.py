@@ -125,7 +125,7 @@ class Map(Tracker):
             is_track_inside_area = False
 
             for area in self.areas:
-                if area.isenter(track.trace_point_list[0]):  # 新添加的轨迹应该计算第一个点的
+                if area.isenter(track.trace_point_list[-1]):  # 新添加的轨迹应该计算最后一个点的
                     is_track_inside_area = True
                     break
 
