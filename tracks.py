@@ -89,7 +89,7 @@ class Tracks:
         else:
             return False
 
-    def update(self, target_xywh=None):
+    def update(self, target_xywh=None, licence='Not', licence_cls='detected'):
         """
         更新轨迹信息。
 
@@ -131,6 +131,9 @@ class Tracks:
         self.update_v_list(2)
         self.v_average = np.mean(self.trace_v_list_value)
         self.updatestoptime()
+        if licence != 'Not':
+            self.licence = licence
+            self.licence_cls=licence_cls
         if self.stoptime > 60:
             self.parking_violation = True
 

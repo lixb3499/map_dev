@@ -3,9 +3,6 @@ import cv2
 from utils import plot_one_box, cal_iou, xyxy_to_xywh, xywh_to_xyxy, updata_trace_list, draw_trace, intersect, ccw, \
      Coord_prcssing
 import datetime
-from tracks import Tracks
-from tracker import Tracker
-from kalmanfilter import KalmanFilter
 from matplotlib import patches
 import cv2
 import numpy as np
@@ -95,31 +92,6 @@ def main(args):
     ax.set_ylim(args.y_lim)
     # ax.invert_yaxis()
 
-    # p1 = [-11 + 14.34, -2.4, -8.6 + 14.34, -7.4]
-    # p2 = [-8.6 + 14.34, -2.4, -6.2 + 14.34, -7.4]
-    # p3 = [-6.2 + 14.34, -2.4, -3.8 + 14.34, -7.4]
-    #
-    # p4 = [-11 + 14.34, 2.4, -8.6 + 14.34, 7.4]
-    # p5 = [-8.6 + 14.34, 2.4, -6.2 + 14.34, 7.4]
-    # p6 = [-6.2 + 14.34, 2.4, -3.8 + 14.34, 7.4]
-    #
-    # p7 = [-2.4 + 14.34, -2.4, 0 + 14.34, -7.4]
-    # p8 = [0 + 14.34, -2.4, 2.4 + 14.34, -7.4]
-    # p9 = [2.4 + 14.34, -2.4, 4.8 + 14.34, -7.4]
-    #
-    # p10 = [-2.4 + 14.34, 2.4, 0 + 14.34, 7.4]
-    # p11 = [0 + 14.34, 2.4, 2.4 + 14.34, 7.4]
-    # p12 = [2.4 + 14.34, 2.4, 4.8 + 14.34, 7.4]
-
-    p1 = [-3.514750679042191, 2.5108268000196183, -6.514750679042191, 4.897439760168044]
-
-    # P = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12]
-    # P = [p1]
-    # for p in P:
-    #     plot_box_map(ax, p)
-
-    # area1 = [coord_to_pixel(ax, (-2.4 + 14.34, 2.4)), coord_to_pixel(ax, (4.8 + 14.34, -2.4))]  # 注意必须是左上、右下的形式
-    # area2 = [coord_to_pixel(ax, (3, 7)), coord_to_pixel(ax, (11, 1.2))]
 
     areas_list = Coord_prcssing(args.coords)
     lane = args.lane
@@ -144,10 +116,6 @@ def main(args):
 
     frame = img_array
 
-    # 设置视频分辨率和大小
-    # width, height = 640, 480
-    # video_size = (width, height)
-
     # 设置视频编解码器
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
@@ -156,7 +124,6 @@ def main(args):
         video_writer = cv2.VideoWriter(video_filename, fourcc, frame_rate,
                                        (100 * args.fig_size[0], 100 * args.fig_size[1]))
 
-    # mat = tracker.iou_mat(content)
 
     frame_counter = 1  # 这里由视频label文件由0还是1开始命名确定
     count1 = 0
@@ -174,30 +141,12 @@ def main(args):
         print(f"\r当前帧数：{frame_counter}/{frame_number}\n", end=' ')
         if frame_counter > frame_number:
             break
-        # label_file_path = os.path.join(label_path, file_name + "_" + str(frame_counter) + ".txt")
-        # label_file_path = os.path.join(label_path, file_name + str(frame_counter) + ".txt")
-        # if not os.path.exists(label_file_path):
-        #     with open(label_file_path, "w") as f:
-        #         pass
-        # with open(label_file_path, "r", encoding='utf-8') as f:
-        #     content = f.readlines()
-        #     # track.predict()
+
         label_file = os.path.join(label_path, 'world_coords' + '_' + str(frame_counter).zfill(3) + ".txt")
         content = changelabel(args, label_file)
         tracker.update(content)
         tracker.print_event()
         tracker.draw_tracks(frame)
-        # tracker.evalue(f'evalue/label_json/{frame_counter:04d}.json')
-        # print('self.parking_occupancy_accuracy = ', tracker.parking_occupancy_accuracy)
-        # print('self.lane_direction_accuracy = ', tracker.lane_direction_accuracy)
-
-        # for track in tracker.tracks:
-        #     if len(track.trace_point_list) < 2:
-        #         break
-        #     point = track.trace_point_list[-1]
-        #     previous_point = track.trace_point_list[-2]
-        #     tracker.intersect(point, previous_point)
-        # tracker.update_count()
         tracker.draw_area(frame)
 
         cv2.putText(frame, "ALL BOXES(Green)", (25, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 200, 0), 2)
@@ -241,22 +190,6 @@ def parse_args():
     parser.add_argument('--lane_direction', type=int, choices=[0, 1], default=0,
                         help='Specify lane direction along x-axis(0) or y-axis(1) (default: x)')
 
-    # parser.add_argument('--areas', nargs='+', type=float, default=[[11.94, -2.4, 19.14, 2.4], [3, -7, 11, -1.2]],
-    #                     help='Define areas as left-top and right-bottom coordinates in the format x1 y1 x2 y2, '
-    #                          'x1 y1 x2 y2, ...')  # 必须是左上、右下对应的
-
-    # parser.add_argument('--areas', nargs='+', type=float,
-    #                     default=[[-6.514750679042191, 16.40145240686459, -3.514750679042191, 9.253977181370766],
-    #                              [3.283867150065455, 16.40145240686459, 6.28814195563638, 9.253977181370766],
-    #                              [-6.514750679042191, 7.25413595637976, -3.514750679042191, 0],
-    #                              [3.283867150065455, 7.25413595637976, 6.283867150065455,0]],
-    #                     help='Define areas as left-top and right-bottom coordinates in the format x1 y1 x2 y2, '
-    #                          'x1 y1 x2 y2, ...')  # 必须是左上、右下对应的
-    # parser.add_argument('--areas', nargs='+', type=float,
-    #                     default=[[2.9138459453663663, 7.188331208487332, 8.413845945366367, 0.08731955084935972],
-    #                              [2.8476686921018706, 17.64568737467815, 8.34766869210187, 8.686314766406971]],
-    #                     help='Define areas as left-top and right-bottom coordinates in the format x1 y1 x2 y2, '
-    #                          'x1 y1 x2 y2, ...')  # 必须是左上、右下对应的
     parser.add_argument('--coords', type=str, default=r"G:\jieshun\project_data\2024_6\point\172.16.1.154\coords.txt", help='车位坐标文件')
 
     args = parser.parse_args()

@@ -38,6 +38,7 @@ class Map(Tracker):
         # 车辆进出车位准确率
         # 车道车行方向准确率
         # 车位有车无车准确率
+        # 准确率计算还没写好
         self.lane_entry_capture_rate = 0.9999
         self.parking_entry_accuracy = 0.9999
         self.lane_direction_accuracy = 0.9999
@@ -245,23 +246,6 @@ class Map(Tracker):
         # 读取JSON文件
         with open(label_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-
-        # lane_entry_capture_rate = 0.9999
-        # parking_entry_accuracy = 0.9999
-        # lane_direction_accuracy = 0.9999
-        # parking_occupancy_accuracy = 0.9999
-        #
-        # parking_occupancy_up = 0  # 车位有无车辆
-        # parking_occupancy_down = 0.1  # 分母
-        #
-        # lane_direction_up = 0  # 行驶方向
-        # lane_direction_d = 0.1
-        #
-        # parking_entry_up = 0
-        # parking_entry_d = 0.1
-        #
-        # lane_entry_capture_up = 0
-        # lane_entry_capture_d = 0.1
 
         for label in data:
             if label['label_cls'] == 'Area Vehicle Count':

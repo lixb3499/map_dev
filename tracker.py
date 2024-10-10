@@ -133,7 +133,7 @@ class Tracker:
             for detection in detection_list:
                 if track.track_id == detection['id']:
                     track.id_matched = True
-                    track.update(detection['coordinate'])
+                    track.update(detection['coordinate'], detection['licence'], detection['licence_cls'])
             if track.lost_number > self.max_lost_number:  # 超过一段时间没有匹配上则直接删除
                 removed_track.append(track)
                 # self.tracks.remove(track)
